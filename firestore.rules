@@ -1,0 +1,80 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() { return request.auth != null; }
+    function role() { return request.auth.token.role; }
+    function userCities() { return request.auth.token.cityIds; }
+
+    function isSuperAdmin() { return isSignedIn() && role() == 'super_admin'; }
+    function isAdmin() { return isSignedIn() && role() == 'admin'; }
+    function isUser() { return isSignedIn() && role() == 'user'; }
+
+    function canSeeCity(cityId) {
+      return isSuperAdmin() || cityId in userCities();
+    }
+
+    function paidUnchanged() {
+      return !('paid' in request.resource.data.diff(resource.data).affectedKeys());
+    }
+    function paidIsTrueOnCreate() {
+      return request.resource.data.paid == true;
+    }
+    function readableAsPaid(data) {
+      return isSuperAdmin() || data.paid == true;
+    }
+
+    // /users — faqat Cloud Function (admin SDK) o'qiy/yoza oladi
+    match /users/{userId} {
+      allow read, write: if false;
+    }
+
+    match /users_public/{userId} {
+      allow read: if isSignedIn() && (isSuperAdmin() || request.auth.uid == userId);
+      allow write: if false;
+    }
+
+    match /cities/{cityId} {
+      allow read: if isSignedIn() && canSeeCity(cityId);
+      allow create, update, delete: if isSuperAdmin();
+
+      match /masters/{masterId} {
+        allow read: if isSignedIn() && canSeeCity(cityId);
+        allow create, update, delete: if (isSuperAdmin() || isAdmin()) && canSeeCity(cityId);
+      }
+
+      match /wells/{wellId} {
+        allow read: if isSignedIn() && canSeeCity(cityId) && readableAsPaid(resource.data);
+        allow create: if (isSuperAdmin() || isAdmin()) && canSeeCity(cityId) && paidIsTrueOnCreate();
+        allow update: if isSuperAdmin() ||
+                       (isAdmin() && canSeeCity(cityId) && resource.data.paid == true && paidUnchanged());
+        allow delete: if isSuperAdmin() ||
+                       (isAdmin() && canSeeCity(cityId) && resource.data.paid == true);
+      }
+
+      match /pipes/{pipeId} {
+        allow read: if isSignedIn() && canSeeCity(cityId) && readableAsPaid(resource.data);
+        allow create: if (isSuperAdmin() || isAdmin()) && canSeeCity(cityId) && paidIsTrueOnCreate();
+        allow update: if isSuperAdmin() ||
+                       (isAdmin() && canSeeCity(cityId) && resource.data.paid == true && paidUnchanged());
+        allow delete: if isSuperAdmin() ||
+                       (isAdmin() && canSeeCity(cityId) && resource.data.paid == true);
+      }
+
+      match /counters/_codes {
+        allow read: if isSignedIn() && canSeeCity(cityId);
+        allow write: if (isSuperAdmin() || isAdmin()) && canSeeCity(cityId);
+      }
+    }
+
+    match /logs/{logId} {
+      allow read: if isSuperAdmin();
+      allow create: if isSignedIn();
+      allow update, delete: if false;
+    }
+
+    match /rate_limit/{installId} {
+      allow read, write: if false;
+    }
+  }
+}
