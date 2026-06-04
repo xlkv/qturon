@@ -32,4 +32,10 @@
 
 ## Yozuvlar
 
-<!-- Hozircha bo'sh — birinchi xato yozilganda shu yerga keladi -->
+## 2026-06-04 — ESLint 9: "couldn't find an eslint.config.(js|mjs|cjs) file"
+**Belgi:** `firebase deploy --only functions` predeploy bosqichida `npm run lint` xato beradi:
+  `ESLint couldn't find an eslint.config.(js|mjs|cjs) file. From ESLint v9.0.0, the default configuration file is now eslint.config.js.`
+**Sabab:** Skelet `functions/.eslintrc.json` (legacy) bilan tuzilgan, lekin `npm install` ESLint ^9 ni o'rnatadi. ESLint 9 faqat flat config (`eslint.config.js`) qabul qiladi.
+**Yechim:** `.eslintrc.json` o'chirildi, `functions/eslint.config.js` (flat config) yaratildi: `@typescript-eslint/parser` + `@typescript-eslint/eslint-plugin`. Yana `package.json` da `eslint --ext .ts src` → `eslint src` (chunki `--ext` flag ESLint 9 da yo'q).
+**Aloqador fayllar:** `functions/eslint.config.js`, `functions/package.json` (scripts.lint).
+**Profilaktika:** Skelet generatorlar ESLint 8 davridan qolgan — yangi `functions/` yaratilsa avval ESLint versiyasini tekshirish.
