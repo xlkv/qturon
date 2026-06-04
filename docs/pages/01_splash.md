@@ -98,4 +98,4 @@ Tugatgandan keyin:
 
 ## Status
 
-TODO
+DONE (2026-06-04) — `lib/features/auth/presentation/splash_page.dart` + `splash_controller.dart`. Silent login real Cloud Function'ni chaqiradi; functions deploy qilinmagan paytda `needLogin` ga qaytadi.

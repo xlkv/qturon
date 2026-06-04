@@ -13,8 +13,8 @@ Har sahifa o'z MD'siga ega. Tartibi taxminan flow bo'yicha (Splash → Login →
 
 | # | Fayl | Marshrut | Role | Status |
 |---|---|---|---|---|
-| 01 | [01_splash.md](01_splash.md) | `/splash` | hammada | TODO |
-| 02 | [02_login_passkey.md](02_login_passkey.md) | `/login` | hammada | TODO |
+| 01 | [01_splash.md](01_splash.md) | `/splash` | hammada | DONE |
+| 02 | [02_login_passkey.md](02_login_passkey.md) | `/login` | hammada | DONE |
 | 03 | [03_map_home.md](03_map_home.md) | `/map` | hammada | TODO |
 | 04 | [04_well_detail.md](04_well_detail.md) | `/wells/:id` | hammada | TODO |
 | 05 | [05_well_create_edit.md](05_well_create_edit.md) | `/wells/new`, `/wells/:id/edit` | super_admin, admin | TODO |

@@ -3,9 +3,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:turon_suv/app.dart';
 
 void main() {
-  testWidgets('App boots to Splash placeholder', (WidgetTester tester) async {
+  testWidgets('App boots and renders Splash logo', (WidgetTester tester) async {
     await tester.pumpWidget(const ProviderScope(child: TuronSuvApp()));
-    await tester.pumpAndSettle();
-    expect(find.text('Splash — qurilmoqda'), findsOneWidget);
+    await tester.pump();
+    expect(find.text('Turon Suv'), findsOneWidget);
+    expect(find.text('TS'), findsOneWidget);
   });
 }

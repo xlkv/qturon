@@ -134,4 +134,4 @@ Tugatgach:
 
 ## Status
 
-TODO
+DONE (2026-06-04) — `lib/features/auth/presentation/login_page.dart`, `widgets/pin_input.dart`, `widgets/numeric_keypad.dart`, `application/login_controller.dart`. Fizik klaviatura ham qabul qilinadi. Rate-limit Cloud Function tomonida.
