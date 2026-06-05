@@ -38,13 +38,30 @@ export const validatePassKey = onCall<ValidatePassKeyData, Promise<ValidatePassK
     const userDoc = snap.docs[0];
     const data = userDoc.data();
 
+    const rawCityIds: unknown[] = Array.isArray(data.cityIds) ? data.cityIds : [];
+    const cityIds = rawCityIds.filter(
+      (v): v is string => typeof v === 'string' && v.length > 0
+    );
     const claims = {
       role: data.role,
-      cityIds: data.cityIds ?? [],
+      cityIds,
       name: data.name ?? '',
     };
 
-    const customToken = await admin.auth().createCustomToken(userDoc.id, claims);
+    // Firebase Auth user mavjudligini ta'minlaymiz (setCustomUserClaims uchun zarur).
+    // Windows C++ SDK custom token ichidagi claims'ni ID token'ga o'tkazmaydi —
+    // shuning uchun claims'ni user account'ga yozamiz.
+    try {
+      await admin.auth().getUser(userDoc.id);
+    } catch (_) {
+      await admin.auth().createUser({
+        uid: userDoc.id,
+        displayName: data.name ?? undefined,
+      });
+    }
+    await admin.auth().setCustomUserClaims(userDoc.id, claims);
+
+    const customToken = await admin.auth().createCustomToken(userDoc.id);
 
     await userDoc.ref.update({
       lastLoginAt: admin.firestore.FieldValue.serverTimestamp(),

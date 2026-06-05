@@ -1,63 +1,42 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:http/http.dart' as http;
 
 import '../../core/errors/app_exception.dart';
+import 'rest/firebase_auth_rest.dart';
 
-/// Cloud Functions callable'lariga HTTP REST orqali murojaat qiluvchi wrapper.
-///
-/// Sabab: `cloud_functions` Flutter plugin Windows desktopni qo'llab-quvvatlamaydi.
-/// Bu wrapper esa pure-Dart (`http` paketi) bo'lgani uchun barcha platformalarda ishlaydi.
-///
-/// Callable Cloud Function HTTP shartlari:
-/// - URL: `https://<region>-<project>.cloudfunctions.net/<function>`
-/// - Method: POST
-/// - Body: `{"data": {...}}`
-/// - Response (200): `{"result": {...}}`
-/// - Response (4xx/5xx): `{"error": {"status": "...", "message": "..."}}`
-/// - Auth: Bearer `<idToken>` headerda (foydalanuvchi sign-in qilingan bo'lsa).
+/// Cloud Functions callable'larini HTTP REST orqali chaqirish.
 class HttpCallable {
   HttpCallable({
     required this.projectId,
     required this.region,
-    FirebaseAuth? auth,
+    required this.auth,
     http.Client? client,
-  })  : _auth = auth ?? FirebaseAuth.instance,
-        _client = client ?? http.Client();
+  }) : _client = client ?? http.Client();
 
   final String projectId;
   final String region;
-  final FirebaseAuth _auth;
+  final FirebaseAuthRest auth;
   final http.Client _client;
 
-  Uri _urlFor(String name) {
-    return Uri.parse('https://$region-$projectId.cloudfunctions.net/$name');
-  }
+  Uri _urlFor(String name) =>
+      Uri.parse('https://$region-$projectId.cloudfunctions.net/$name');
 
-  /// Callable Cloud Function'ni chaqirib, javob `result` qiymatini qaytaradi.
   Future<Map<String, dynamic>> call(
     String name,
     Map<String, dynamic> data, {
     Duration timeout = const Duration(seconds: 30),
   }) async {
-    final url = _urlFor(name);
     final headers = <String, String>{'Content-Type': 'application/json'};
-
-    final user = _auth.currentUser;
-    if (user != null) {
-      final token = await user.getIdToken();
-      if (token != null) {
-        headers['Authorization'] = 'Bearer $token';
-      }
-    }
+    final token = await auth.getIdToken();
+    if (token != null) headers['Authorization'] = 'Bearer $token';
 
     final http.Response resp;
     try {
       resp = await _client
-          .post(url, headers: headers, body: jsonEncode({'data': data}))
+          .post(_urlFor(name), headers: headers, body: jsonEncode({'data': data}))
           .timeout(timeout);
     } on TimeoutException {
       throw const NetworkException('timeout');
@@ -83,10 +62,7 @@ class HttpCallable {
     }
 
     final result = body['result'];
-    if (result is Map) {
-      return Map<String, dynamic>.from(result);
-    }
-    return <String, dynamic>{};
+    return result is Map ? Map<String, dynamic>.from(result) : <String, dynamic>{};
   }
 
   AppException _mapStatus(String status, String? message) {
@@ -112,7 +88,11 @@ class HttpCallable {
 
 final httpCallableProvider = Provider<HttpCallable>((ref) {
   return HttpCallable(
-    projectId: 'agrobankcallcentertrain',
+    projectId: const String.fromEnvironment(
+      'FIREBASE_PROJECT_ID',
+      defaultValue: 'agrobankcallcentertrain',
+    ),
     region: 'europe-west1',
+    auth: ref.watch(firebaseAuthRestProvider),
   );
 });

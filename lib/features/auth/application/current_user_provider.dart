@@ -1,24 +1,33 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../data/firebase/rest/firebase_auth_rest.dart';
+import '../../../data/firebase/rest/firestore_rest.dart';
 import '../domain/app_user.dart';
 import '../domain/role.dart';
 
-final firebaseAuthStateProvider = StreamProvider<User?>((ref) {
-  return FirebaseAuth.instance.authStateChanges();
+/// Joriy sign-in holati (uid yoki null).
+final authStateProvider = StreamProvider<String?>((ref) {
+  return ref.watch(firebaseAuthRestProvider).authStateChanges();
 });
 
-final currentUserProvider = FutureProvider<AppUser?>((ref) async {
-  final fbUser = ref.watch(firebaseAuthStateProvider).valueOrNull;
-  if (fbUser == null) return null;
-
-  final tokenResult = await fbUser.getIdTokenResult();
-  final claims = tokenResult.claims ?? <String, dynamic>{};
-
-  return AppUser(
-    id: fbUser.uid,
-    name: (claims['name'] as String?) ?? fbUser.displayName ?? '',
-    role: Role.fromWire(claims['role'] as String?),
-    cityIds: List<String>.from((claims['cityIds'] as List?) ?? const []),
-  );
+/// Joriy foydalanuvchi — Firestore `/users/{uid}` doc'idan o'qiladi (polling).
+final currentUserProvider = StreamProvider<AppUser?>((ref) {
+  final uid = ref.watch(authStateProvider).valueOrNull;
+  if (uid == null) {
+    return Stream<AppUser?>.value(null);
+  }
+  final firestore = ref.watch(firestoreRestProvider);
+  return firestore.streamDoc('users/$uid').map((snap) {
+    if (snap == null || !snap.exists) {
+      return AppUser(id: uid, name: '', role: Role.user);
+    }
+    final data = snap.data;
+    return AppUser(
+      id: uid,
+      name: (data['name'] as String?) ?? '',
+      role: Role.fromWire(data['role'] as String?),
+      phone: data['phone'] as String?,
+      lastLoginAt: data['lastLoginAt'] as DateTime?,
+    );
+  });
 });

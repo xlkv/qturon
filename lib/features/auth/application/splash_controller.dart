@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/logging/app_logger.dart';
@@ -14,10 +15,16 @@ class SplashController extends AsyncNotifier<SplashResult?> {
     state = await AsyncValue.guard(() async {
       final repo = ref.read(authRepositoryProvider);
       final logger = ref.read(loggerProvider);
-
-      final ok = await repo.trySilentLogin();
-      logger.info('splash.silent_login', {'ok': ok});
-      return ok ? SplashResult.ready : SplashResult.needLogin;
+      debugPrint('[splash] bootstrap start');
+      try {
+        final ok = await repo.trySilentLogin();
+        debugPrint('[splash] trySilentLogin -> $ok');
+        logger.info('splash.silent_login', {'ok': ok});
+        return ok ? SplashResult.ready : SplashResult.needLogin;
+      } catch (e, st) {
+        debugPrint('[splash] ERROR: $e\n$st');
+        return SplashResult.needLogin;
+      }
     });
   }
 }

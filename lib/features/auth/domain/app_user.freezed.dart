@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$AppUser {
 
- String get id; String get name; Role get role; List<String> get cityIds; String? get phone; DateTime? get lastLoginAt;
+ String get id; String get name; Role get role; String? get phone; DateTime? get lastLoginAt;
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $AppUserCopyWith<AppUser> get copyWith => _$AppUserCopyWithImpl<AppUser>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.role, role) || other.role == role)&&const DeepCollectionEquality().equals(other.cityIds, cityIds)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.lastLoginAt, lastLoginAt) || other.lastLoginAt == lastLoginAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.role, role) || other.role == role)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.lastLoginAt, lastLoginAt) || other.lastLoginAt == lastLoginAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,role,const DeepCollectionEquality().hash(cityIds),phone,lastLoginAt);
+int get hashCode => Object.hash(runtimeType,id,name,role,phone,lastLoginAt);
 
 @override
 String toString() {
-  return 'AppUser(id: $id, name: $name, role: $role, cityIds: $cityIds, phone: $phone, lastLoginAt: $lastLoginAt)';
+  return 'AppUser(id: $id, name: $name, role: $role, phone: $phone, lastLoginAt: $lastLoginAt)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $AppUserCopyWith<$Res>  {
   factory $AppUserCopyWith(AppUser value, $Res Function(AppUser) _then) = _$AppUserCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, Role role, List<String> cityIds, String? phone, DateTime? lastLoginAt
+ String id, String name, Role role, String? phone, DateTime? lastLoginAt
 });
 
 
@@ -62,13 +62,12 @@ class _$AppUserCopyWithImpl<$Res>
 
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? role = null,Object? cityIds = null,Object? phone = freezed,Object? lastLoginAt = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? role = null,Object? phone = freezed,Object? lastLoginAt = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
-as Role,cityIds: null == cityIds ? _self.cityIds : cityIds // ignore: cast_nullable_to_non_nullable
-as List<String>,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+as Role,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,lastLoginAt: freezed == lastLoginAt ? _self.lastLoginAt : lastLoginAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));
@@ -155,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  Role role,  List<String> cityIds,  String? phone,  DateTime? lastLoginAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  Role role,  String? phone,  DateTime? lastLoginAt)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _AppUser() when $default != null:
-return $default(_that.id,_that.name,_that.role,_that.cityIds,_that.phone,_that.lastLoginAt);case _:
+return $default(_that.id,_that.name,_that.role,_that.phone,_that.lastLoginAt);case _:
   return orElse();
 
 }
@@ -176,10 +175,10 @@ return $default(_that.id,_that.name,_that.role,_that.cityIds,_that.phone,_that.l
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  Role role,  List<String> cityIds,  String? phone,  DateTime? lastLoginAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  Role role,  String? phone,  DateTime? lastLoginAt)  $default,) {final _that = this;
 switch (_that) {
 case _AppUser():
-return $default(_that.id,_that.name,_that.role,_that.cityIds,_that.phone,_that.lastLoginAt);case _:
+return $default(_that.id,_that.name,_that.role,_that.phone,_that.lastLoginAt);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -196,10 +195,10 @@ return $default(_that.id,_that.name,_that.role,_that.cityIds,_that.phone,_that.l
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  Role role,  List<String> cityIds,  String? phone,  DateTime? lastLoginAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  Role role,  String? phone,  DateTime? lastLoginAt)?  $default,) {final _that = this;
 switch (_that) {
 case _AppUser() when $default != null:
-return $default(_that.id,_that.name,_that.role,_that.cityIds,_that.phone,_that.lastLoginAt);case _:
+return $default(_that.id,_that.name,_that.role,_that.phone,_that.lastLoginAt);case _:
   return null;
 
 }
@@ -211,19 +210,12 @@ return $default(_that.id,_that.name,_that.role,_that.cityIds,_that.phone,_that.l
 
 
 class _AppUser implements AppUser {
-  const _AppUser({required this.id, required this.name, required this.role, final  List<String> cityIds = const <String>[], this.phone, this.lastLoginAt}): _cityIds = cityIds;
+  const _AppUser({required this.id, required this.name, required this.role, this.phone, this.lastLoginAt});
   
 
 @override final  String id;
 @override final  String name;
 @override final  Role role;
- final  List<String> _cityIds;
-@override@JsonKey() List<String> get cityIds {
-  if (_cityIds is EqualUnmodifiableListView) return _cityIds;
-  // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_cityIds);
-}
-
 @override final  String? phone;
 @override final  DateTime? lastLoginAt;
 
@@ -237,16 +229,16 @@ _$AppUserCopyWith<_AppUser> get copyWith => __$AppUserCopyWithImpl<_AppUser>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.role, role) || other.role == role)&&const DeepCollectionEquality().equals(other._cityIds, _cityIds)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.lastLoginAt, lastLoginAt) || other.lastLoginAt == lastLoginAt));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _AppUser&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.role, role) || other.role == role)&&(identical(other.phone, phone) || other.phone == phone)&&(identical(other.lastLoginAt, lastLoginAt) || other.lastLoginAt == lastLoginAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,role,const DeepCollectionEquality().hash(_cityIds),phone,lastLoginAt);
+int get hashCode => Object.hash(runtimeType,id,name,role,phone,lastLoginAt);
 
 @override
 String toString() {
-  return 'AppUser(id: $id, name: $name, role: $role, cityIds: $cityIds, phone: $phone, lastLoginAt: $lastLoginAt)';
+  return 'AppUser(id: $id, name: $name, role: $role, phone: $phone, lastLoginAt: $lastLoginAt)';
 }
 
 
@@ -257,7 +249,7 @@ abstract mixin class _$AppUserCopyWith<$Res> implements $AppUserCopyWith<$Res> {
   factory _$AppUserCopyWith(_AppUser value, $Res Function(_AppUser) _then) = __$AppUserCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, Role role, List<String> cityIds, String? phone, DateTime? lastLoginAt
+ String id, String name, Role role, String? phone, DateTime? lastLoginAt
 });
 
 
@@ -274,13 +266,12 @@ class __$AppUserCopyWithImpl<$Res>
 
 /// Create a copy of AppUser
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? role = null,Object? cityIds = null,Object? phone = freezed,Object? lastLoginAt = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? role = null,Object? phone = freezed,Object? lastLoginAt = freezed,}) {
   return _then(_AppUser(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,role: null == role ? _self.role : role // ignore: cast_nullable_to_non_nullable
-as Role,cityIds: null == cityIds ? _self._cityIds : cityIds // ignore: cast_nullable_to_non_nullable
-as List<String>,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
+as Role,phone: freezed == phone ? _self.phone : phone // ignore: cast_nullable_to_non_nullable
 as String?,lastLoginAt: freezed == lastLoginAt ? _self.lastLoginAt : lastLoginAt // ignore: cast_nullable_to_non_nullable
 as DateTime?,
   ));

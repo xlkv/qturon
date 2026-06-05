@@ -1,15 +1,16 @@
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/errors/app_exception.dart';
 import '../../../core/utils/secure_storage.dart';
 import '../../../data/firebase/http_callable.dart';
+import '../../../data/firebase/rest/firebase_auth_rest.dart';
 
 class AuthRepository {
   AuthRepository(this._auth, this._callable, this._storage);
 
-  final FirebaseAuth _auth;
+  final FirebaseAuthRest _auth;
   final HttpCallable _callable;
   final SecureStorage _storage;
 
@@ -30,7 +31,6 @@ class AuthRepository {
     }
 
     final installId = await _installId();
-
     final result = await _callable.call('validatePassKey', {
       'passKey': passKey,
       'installId': installId,
@@ -39,11 +39,7 @@ class AuthRepository {
     final token = result['customToken'] as String?;
     if (token == null) throw const UnknownException('no_token');
 
-    try {
-      await _auth.signInWithCustomToken(token);
-    } on FirebaseAuthException catch (e) {
-      throw AuthException(e.code, e.message);
-    }
+    await _auth.signInWithCustomToken(token);
 
     if (remember) {
       await _storage.write(SecureStorageKeys.passKey, passKey);
@@ -53,13 +49,20 @@ class AuthRepository {
   }
 
   Future<bool> trySilentLogin() async {
-    final passKey = await _storage.read(SecureStorageKeys.passKey);
-    if (passKey == null) return false;
+    debugPrint('[auth] trySilentLogin: check existing token');
+    final existing = await _auth.getIdToken();
+    debugPrint('[auth] existing token: ${existing != null ? "yes" : "no"}');
+    if (existing != null) return true;
 
+    final passKey = await _storage.read(SecureStorageKeys.passKey);
+    debugPrint('[auth] saved passKey: ${passKey != null ? "yes" : "no"}');
+    if (passKey == null) return false;
     try {
       await signInWithPassKey(passKey, remember: true);
+      debugPrint('[auth] signInWithPassKey: success');
       return true;
-    } on AppException {
+    } on AppException catch (e) {
+      debugPrint('[auth] signInWithPassKey: FAILED $e');
       await _storage.delete(SecureStorageKeys.passKey);
       return false;
     }
@@ -73,7 +76,7 @@ class AuthRepository {
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(
-    FirebaseAuth.instance,
+    ref.watch(firebaseAuthRestProvider),
     ref.watch(httpCallableProvider),
     ref.watch(secureStorageProvider),
   );

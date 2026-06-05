@@ -2,23 +2,22 @@ rules_version = '2';
 service firebase.storage {
   match /b/{bucket}/o {
     function isSignedIn() { return request.auth != null; }
-    function role() { return request.auth.token.role; }
+    function role() {
+      return firestore.get(/databases/(default)/documents/users/$(request.auth.uid)).data.role;
+    }
     function isSuperAdmin() { return isSignedIn() && role() == 'super_admin'; }
     function isAdmin() { return isSignedIn() && role() == 'admin'; }
-    function canSeeCity(cityId) {
-      return isSuperAdmin() || cityId in request.auth.token.cityIds;
-    }
 
-    match /wells/{cityId}/{wellId}/{file} {
-      allow read: if isSignedIn() && canSeeCity(cityId);
-      allow write: if (isSuperAdmin() || isAdmin()) && canSeeCity(cityId)
+    match /wells/{wellId}/{file} {
+      allow read: if isSignedIn();
+      allow write: if (isSuperAdmin() || isAdmin())
                      && request.resource.size < 5 * 1024 * 1024
                      && request.resource.contentType.matches('image/.*');
     }
 
-    match /pipes/{cityId}/{pipeId}/{file} {
-      allow read: if isSignedIn() && canSeeCity(cityId);
-      allow write: if (isSuperAdmin() || isAdmin()) && canSeeCity(cityId)
+    match /pipes/{pipeId}/{file} {
+      allow read: if isSignedIn();
+      allow write: if (isSuperAdmin() || isAdmin())
                      && request.resource.size < 5 * 1024 * 1024
                      && request.resource.contentType.matches('image/.*');
     }

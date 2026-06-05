@@ -17,10 +17,5 @@ class Permissions {
   bool get canHardDeleteMaster => role.isSuperAdmin;
 
   bool get canManageUsers => role.isSuperAdmin;
-  bool get canManageCities => role.isSuperAdmin;
   bool get canViewAuditLog => role.isSuperAdmin;
-
-  bool canSeeCity(String cityId, List<String> userCityIds) {
-    return role.isSuperAdmin || userCityIds.contains(cityId);
-  }
 }

@@ -23,20 +23,21 @@ dependencies:
   freezed_annotation: ^3.0.0
   json_annotation: ^4.9.0
 
-  # Firebase
-  firebase_core: ^3.8.0
-  firebase_auth: ^5.3.4
-  cloud_firestore: ^5.5.0
-  firebase_storage: ^12.3.7
-  # Note: cloud_functions Flutter plugin Windows desktopni qo'llab-quvvatlamaydi.
-  # Buning o'rniga Cloud Function'larga HTTP REST orqali murojaat qilamiz
-  # (lib/data/firebase/http_callable.dart). http paketi quyida.
-
-  # HTTP (Cloud Function callable'ga REST orqali)
+  # Firebase — barcha servislarga HTTP REST orqali murojaat qilamiz.
+  # Sabab: firebase_auth/cloud_firestore/firebase_storage Flutter plagini Windows
+  # desktop'da 740MB Firebase C++ SDK yuklaydi va katta nazoratsiz kompilyatsiya talab qiladi.
+  # Pure-Dart http esa hamma platformada bir xil va tez ishlaydi.
+  #
+  # REST endpoints:
+  # - Auth: https://identitytoolkit.googleapis.com / https://securetoken.googleapis.com
+  # - Firestore: https://firestore.googleapis.com
+  # - Storage: https://firebasestorage.googleapis.com
+  # - Cloud Functions: https://<region>-<project>.cloudfunctions.net
   http: ^1.2.2
 
   # Map (flutter_map + Yandex tile servers — Windows + Android + iOS)
   flutter_map: ^7.0.2
+  flutter_map_marker_cluster: ^1.4.0
   latlong2: ^0.9.1
 
   # Local storage

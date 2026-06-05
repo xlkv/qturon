@@ -57,17 +57,6 @@ class _ProfileBody extends ConsumerWidget {
             title: const Text('Telefon'),
             subtitle: Text(user.phone!),
           ),
-        ListTile(
-          leading: const Icon(Icons.location_city_outlined),
-          title: const Text('Shaharlar'),
-          subtitle: Text(
-            user.role.isSuperAdmin
-                ? 'Barchasi'
-                : user.cityIds.isEmpty
-                    ? '—'
-                    : user.cityIds.join(', '),
-          ),
-        ),
         const SizedBox(height: AppSpacing.xl),
         FilledButton.tonalIcon(
           onPressed: () => _onLogout(context, ref),

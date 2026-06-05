@@ -3,15 +3,14 @@ service cloud.firestore {
   match /databases/{database}/documents {
 
     function isSignedIn() { return request.auth != null; }
-    function role() { return request.auth.token.role; }
-    function userCities() { return request.auth.token.cityIds; }
+    function userId() { return request.auth.uid; }
 
+    // Role'ni Firestore /users/{uid} doc'idan o'qiymiz (custom claims ishlatmaymiz).
+    function role() {
+      return get(/databases/$(database)/documents/users/$(userId())).data.role;
+    }
     function isSuperAdmin() { return isSignedIn() && role() == 'super_admin'; }
     function isAdmin() { return isSignedIn() && role() == 'admin'; }
-
-    function canSeeCity(cityId) {
-      return isSuperAdmin() || cityId in userCities();
-    }
 
     function paidUnchanged() {
       return !('paid' in request.resource.data.diff(resource.data).affectedKeys());
@@ -23,49 +22,39 @@ service cloud.firestore {
       return isSuperAdmin() || data.paid == true;
     }
 
-    // /users — faqat Cloud Function (admin SDK) o'qiy/yoza oladi
-    match /users/{userId} {
-      allow read, write: if false;
-    }
-
-    match /users_public/{userId} {
-      allow read: if isSignedIn() && (isSuperAdmin() || request.auth.uid == userId);
-      allow write: if false;
-    }
-
-    match /cities/{cityId} {
-      allow read: if isSignedIn() && canSeeCity(cityId);
+    // /users — user o'z doc'ini o'qiy oladi, super-admin hammasini boshqaradi.
+    match /users/{uid} {
+      allow read: if isSignedIn() && (request.auth.uid == uid || isSuperAdmin());
       allow create, update, delete: if isSuperAdmin();
-
-      match /masters/{masterId} {
-        allow read: if isSignedIn() && canSeeCity(cityId);
-        allow create, update, delete: if (isSuperAdmin() || isAdmin()) && canSeeCity(cityId);
-      }
-
-      match /wells/{wellId} {
-        allow read: if isSignedIn() && canSeeCity(cityId) && readableAsPaid(resource.data);
-        allow create: if (isSuperAdmin() || isAdmin()) && canSeeCity(cityId) && paidIsTrueOnCreate();
-        allow update: if isSuperAdmin() ||
-                       (isAdmin() && canSeeCity(cityId) && resource.data.paid == true && paidUnchanged());
-        allow delete: if isSuperAdmin() ||
-                       (isAdmin() && canSeeCity(cityId) && resource.data.paid == true);
-      }
-
-      match /pipes/{pipeId} {
-        allow read: if isSignedIn() && canSeeCity(cityId) && readableAsPaid(resource.data);
-        allow create: if (isSuperAdmin() || isAdmin()) && canSeeCity(cityId) && paidIsTrueOnCreate();
-        allow update: if isSuperAdmin() ||
-                       (isAdmin() && canSeeCity(cityId) && resource.data.paid == true && paidUnchanged());
-        allow delete: if isSuperAdmin() ||
-                       (isAdmin() && canSeeCity(cityId) && resource.data.paid == true);
-      }
-
-      match /counters/_codes {
-        allow read: if isSignedIn() && canSeeCity(cityId);
-        allow write: if (isSuperAdmin() || isAdmin()) && canSeeCity(cityId);
-      }
     }
 
+    // /wells — global collection.
+    match /wells/{wellId} {
+      allow read: if isSignedIn() && readableAsPaid(resource.data);
+      allow create: if (isSuperAdmin() || isAdmin()) && paidIsTrueOnCreate();
+      allow update: if isSuperAdmin() ||
+                     (isAdmin() && resource.data.paid == true && paidUnchanged());
+      allow delete: if isSuperAdmin() ||
+                     (isAdmin() && resource.data.paid == true);
+    }
+
+    // /pipes — global collection.
+    match /pipes/{pipeId} {
+      allow read: if isSignedIn() && readableAsPaid(resource.data);
+      allow create: if (isSuperAdmin() || isAdmin()) && paidIsTrueOnCreate();
+      allow update: if isSuperAdmin() ||
+                     (isAdmin() && resource.data.paid == true && paidUnchanged());
+      allow delete: if isSuperAdmin() ||
+                     (isAdmin() && resource.data.paid == true);
+    }
+
+    // /masters — global collection.
+    match /masters/{masterId} {
+      allow read: if isSignedIn();
+      allow create, update, delete: if isSuperAdmin() || isAdmin();
+    }
+
+    // /logs
     match /logs/{logId} {
       allow read: if isSuperAdmin();
       allow create: if isSignedIn();
