@@ -8,7 +8,6 @@ service cloud.firestore {
 
     function isSuperAdmin() { return isSignedIn() && role() == 'super_admin'; }
     function isAdmin() { return isSignedIn() && role() == 'admin'; }
-    function isUser() { return isSignedIn() && role() == 'user'; }
 
     function canSeeCity(cityId) {
       return isSuperAdmin() || cityId in userCities();

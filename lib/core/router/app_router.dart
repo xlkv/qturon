@@ -4,7 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/application/current_user_provider.dart';
 import '../../features/auth/presentation/login_page.dart';
+import '../../features/auth/presentation/profile_page.dart';
 import '../../features/auth/presentation/splash_page.dart';
+import '../../features/cities/presentation/cities_manage_page.dart';
+import '../../features/map/presentation/map_home_page.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   return GoRouter(
@@ -25,7 +28,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(path: '/splash', builder: (_, _) => const SplashPage()),
       GoRoute(path: '/login', builder: (_, _) => const LoginPage()),
-      GoRoute(path: '/map', builder: (_, _) => const _Placeholder(title: 'Xarita')),
+      GoRoute(path: '/map', builder: (_, _) => const MapHomePage()),
+      GoRoute(path: '/profile', builder: (_, _) => const ProfilePage()),
+      GoRoute(path: '/cities', builder: (_, _) => const CitiesManagePage()),
     ],
   );
 });
@@ -44,16 +49,3 @@ class GoRouterRefreshStream extends ChangeNotifier {
   }
 }
 
-class _Placeholder extends StatelessWidget {
-  const _Placeholder({required this.title});
-
-  final String title;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(title)),
-      body: Center(child: Text('$title — qurilmoqda')),
-    );
-  }
-}

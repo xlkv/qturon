@@ -15,7 +15,7 @@ Har sahifa o'z MD'siga ega. Tartibi taxminan flow bo'yicha (Splash → Login →
 |---|---|---|---|---|
 | 01 | [01_splash.md](01_splash.md) | `/splash` | hammada | DONE |
 | 02 | [02_login_passkey.md](02_login_passkey.md) | `/login` | hammada | DONE |
-| 03 | [03_map_home.md](03_map_home.md) | `/map` | hammada | TODO |
+| 03 | [03_map_home.md](03_map_home.md) | `/map` | hammada | WIP |
 | 04 | [04_well_detail.md](04_well_detail.md) | `/wells/:id` | hammada | TODO |
 | 05 | [05_well_create_edit.md](05_well_create_edit.md) | `/wells/new`, `/wells/:id/edit` | super_admin, admin | TODO |
 | 06 | [06_pipe_detail.md](06_pipe_detail.md) | `/pipes/:id` | hammada | TODO |
@@ -24,7 +24,7 @@ Har sahifa o'z MD'siga ega. Tartibi taxminan flow bo'yicha (Splash → Login →
 | 09 | [09_masters_manage.md](09_masters_manage.md) | `/masters` | super_admin, admin | TODO |
 | 10 | [10_users_manage.md](10_users_manage.md) | `/users` | super_admin | TODO |
 | 11 | [11_cities_manage.md](11_cities_manage.md) | `/cities` | super_admin | TODO |
-| 12 | [12_profile.md](12_profile.md) | `/profile` | hammada | TODO |
+| 12 | [12_profile.md](12_profile.md) | `/profile` | hammada | DONE |
 | 13 | [13_audit_log.md](13_audit_log.md) | `/audit` | super_admin | TODO |
 
 ## Sprint tartibi (tavsiya)

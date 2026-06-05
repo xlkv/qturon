@@ -81,4 +81,4 @@ Tugatgach: Status DONE + INDEX + CHANGELOG.
 
 ## Status
 
-TODO
+DONE (2026-06-04) — `lib/features/auth/presentation/profile_page.dart`. Avatar (ism birinchi harfi), role badge, telefon (agar bor), shaharlar, logout (confirm dialog bilan). Marshrut `/profile`. Map placeholder'da AppBar'dagi Person icon orqali ochiladi.

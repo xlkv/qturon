@@ -34,6 +34,16 @@ Har yozuv shu shakl bo'yicha:
 
 ## Yozuvlar
 
+## 2026-06-04 — feat(cities,map,profile): Profile + Cities CRUD + Map skeleton
+- **Deploy:** `firebase deploy --only functions` (validatePassKey jonli, europe-west1), `firestore:rules` + `storage:rules` deployed. Compute Engine API gcloud orqali yoqildi (`gcloud services enable compute.googleapis.com`).
+- **Profile (sahifa 12):** `features/auth/presentation/profile_page.dart` — avatar, ism, role badge, telefon, shaharlar, logout (confirm dialog bilan)
+- **Cities CRUD (sahifa 11):** `features/cities/data/city_repository.dart`, `application/active_city_provider.dart` (SharedPreferences orqali super-admin tanlovini eslab qoladi), `presentation/cities_manage_page.dart`, `widgets/city_form_sheet.dart`. Router guard (faqat super_admin).
+- **Map skelet (sahifa 03 — WIP):** `features/map/presentation/map_home_page.dart` — AppBar (super-admin uchun shahar dropdown), Drawer (Map/Ustalar/Shaharlar/Foydalanuvchilar/Audit log/Profil — perms bilan). YandexMap Android'da render. Windows desktopda "qo'llab-quvvatlanmaydi" empty state. Empty state'lar: shahar yo'q (Shahar qo'shish tugmasi), shahar tayinlanmagan.
+- **Router:** `/profile`, `/cities`, `/map` real sahifalarga ulandi. Placeholder o'chirildi.
+- `firestore.rules`: ishlatilmaydigan `isUser` helper o'chirildi.
+- `flutter analyze` toza, widget_test o'tdi.
+- Migration: Keyingi qadam — birinchi super-admin Firebase Console'da qo'lda yaratish (AUTH_AND_ROLES.md §5), keyin login real ishlaydi.
+
 ## 2026-06-04 — feat(auth): Splash + Login (pass-key) + auth-gated router
 - `flutterfire configure --project=agrobankcallcentertrain` — `lib/firebase_options.dart` (gitignored)
 - Domain modellari: `AppUser`, `Role`, `ObjectStatus`, `City`, `Master`, `Well`, `Pipe` (Freezed 3.x — `abstract class with _$X`)

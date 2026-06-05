@@ -121,4 +121,4 @@ Tugatgach: Status DONE + INDEX + CHANGELOG.
 
 ## Status
 
-TODO
+DONE (2026-06-04) — `cities_manage_page.dart` + `city_form_sheet.dart` + `city_repository.dart`. Router guard (`/cities` faqat super_admin). Lokatsiya hozircha lat/lng raqamli forma (interaktiv map picker faza 2'da). Delete confirm bilan. `active_city_provider.dart` SharedPreferences orqali super-admin tanlovini eslab qoladi.
