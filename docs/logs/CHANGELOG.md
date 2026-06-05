@@ -34,6 +34,16 @@ Har yozuv shu shakl bo'yicha:
 
 ## Yozuvlar
 
+## 2026-06-04 — fix(windows): cloud_functions plugin → HTTP REST
+- `cloud_functions` Flutter plugin Windows desktop'da ishlamaydi → `Unable to establish connection on channel` xato.
+- Yechim: `lib/data/firebase/http_callable.dart` — pure-Dart `http` paketi orqali callable Cloud Function REST chaqirig'i. URL: `https://<region>-<project>.cloudfunctions.net/<function>`.
+- `cloud_functions` paketi pubspec'dan olib tashlandi, `http: ^1.2.2` qo'shildi.
+- `AuthRepository` HttpCallable'ni ishlatadi (`validatePassKey`).
+- Bearer token avtomatik headerga qo'shiladi (foydalanuvchi sign-in qilingan bo'lsa).
+- Status mapper: UNAUTHENTICATED / INVALID_ARGUMENT / RESOURCE_EXHAUSTED / NOT_FOUND / UNAVAILABLE → AppException.
+- Hujjat: `docs/logs/ERRORS.md` ga qo'shildi. Keyingi Cloud Function chaqirig'lari shu wrapper'ni ishlatishi shart.
+- Verification: build muvaffaqiyatli, app ishga tushdi, "Unable to establish connection" xato yo'q.
+
 ## 2026-06-04 — chore(windows): Windows build ishladi (flutter_map + shared_preferences)
 - **Map provider:** `yandex_mapkit` → `flutter_map` + Yandex tile servers (`core-renderer-tiles.maps.yandex.net`). Pure Dart, Windows + Android + iOS hammasida ishlaydi. Yandex ko'rinishi va ma'lumotlari saqlanadi.
 - **Local storage:** `flutter_secure_storage` → `shared_preferences`. Sabab: secure_storage Windows'da Microsoft ATL (`atlstr.h`) talab qiladi, ko'p devda yo'q. Trade-off documented in `AUTH_AND_ROLES.md` §7.

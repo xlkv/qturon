@@ -32,6 +32,14 @@
 
 ## Yozuvlar
 
+## 2026-06-04 — Windows: `cloud_functions` plugin "Unable to establish connection on channel"
+**Belgi:** Windows app login sahifasida kod kiritilganda yoki silent_login chaqirilganda:
+  `Unable to establish connection on channel: "dev.flutter.pigeon.cloud_functions_platform_interface.CloudFunctionsHostApi.call"`
+**Sabab:** `cloud_functions` Flutter plugin Windows desktopni qo'llab-quvvatlamaydi (rasmiy supported platforms: Android, iOS, macOS, Web). Pigeon channel mavjud emas → MethodChannel chaqirig'i muvaffaqiyatsiz.
+**Yechim:** `cloud_functions` paketi olib tashlandi. `lib/data/firebase/http_callable.dart` — pure-Dart `http` paketi orqali Cloud Function callable'larga REST chaqirig'i. URL format: `https://<region>-<project>.cloudfunctions.net/<function>`. Request: `{"data": {...}}`, response: `{"result": {...}}`. Hamma platformada (Windows + Android + iOS + Web) ishlaydi. `AuthRepository` shu wrapper'ni ishlatadi.
+**Aloqador fayllar:** `pubspec.yaml`, `lib/data/firebase/http_callable.dart`, `lib/features/auth/data/auth_repository.dart`.
+**Profilaktika:** Firebase plugin'larini qo'shishdan oldin Windows desktop support'ni tekshirish (pub.dev'da "supported platforms"). Cloud Functions chaqirig'i uchun HTTP wrapper standart pattern bo'lib qoldi — yangi callable'lar shu yo'l bilan qo'shiladi.
+
 ## 2026-06-04 — Windows build: `Cannot open include file: 'atlstr.h'`
 **Belgi:** `flutter build windows` xato:
   `flutter_secure_storage_windows_plugin.cpp(6,10): error C1083: Cannot open include file: 'atlstr.h'`

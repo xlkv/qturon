@@ -28,7 +28,12 @@ dependencies:
   firebase_auth: ^5.3.4
   cloud_firestore: ^5.5.0
   firebase_storage: ^12.3.7
-  cloud_functions: ^5.1.5
+  # Note: cloud_functions Flutter plugin Windows desktopni qo'llab-quvvatlamaydi.
+  # Buning o'rniga Cloud Function'larga HTTP REST orqali murojaat qilamiz
+  # (lib/data/firebase/http_callable.dart). http paketi quyida.
+
+  # HTTP (Cloud Function callable'ga REST orqali)
+  http: ^1.2.2
 
   # Map (flutter_map + Yandex tile servers — Windows + Android + iOS)
   flutter_map: ^7.0.2

@@ -1,16 +1,16 @@
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../core/errors/app_exception.dart';
 import '../../../core/utils/secure_storage.dart';
+import '../../../data/firebase/http_callable.dart';
 
 class AuthRepository {
-  AuthRepository(this._auth, this._functions, this._storage);
+  AuthRepository(this._auth, this._callable, this._storage);
 
   final FirebaseAuth _auth;
-  final FirebaseFunctions _functions;
+  final HttpCallable _callable;
   final SecureStorage _storage;
 
   static const _uuid = Uuid();
@@ -31,21 +31,12 @@ class AuthRepository {
 
     final installId = await _installId();
 
-    final Map<String, dynamic> data;
-    try {
-      final callable = _functions.httpsCallable('validatePassKey');
-      final result = await callable.call<Map<Object?, Object?>>({
-        'passKey': passKey,
-        'installId': installId,
-      });
-      data = Map<String, dynamic>.from(result.data);
-    } on FirebaseFunctionsException catch (e) {
-      throw _mapFunctionsException(e);
-    } catch (_) {
-      throw const NetworkException();
-    }
+    final result = await _callable.call('validatePassKey', {
+      'passKey': passKey,
+      'installId': installId,
+    });
 
-    final token = data['customToken'] as String?;
+    final token = result['customToken'] as String?;
     if (token == null) throw const UnknownException('no_token');
 
     try {
@@ -78,28 +69,12 @@ class AuthRepository {
     await _storage.delete(SecureStorageKeys.passKey);
     await _auth.signOut();
   }
-
-  AppException _mapFunctionsException(FirebaseFunctionsException e) {
-    switch (e.code) {
-      case 'unauthenticated':
-        return const AuthException('pass_key_not_found', 'Noto\'g\'ri kod');
-      case 'invalid-argument':
-        return const ValidationException('invalid_pass_key', '6 xonali raqam kiriting');
-      case 'resource-exhausted':
-        return const AuthException('rate_limited', 'Juda ko\'p urinish. Keyinroq qayta urining.');
-      case 'unavailable':
-      case 'deadline-exceeded':
-        return const NetworkException();
-      default:
-        return UnknownException(e.message);
-    }
-  }
 }
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(
     FirebaseAuth.instance,
-    FirebaseFunctions.instanceFor(region: 'europe-west1'),
+    ref.watch(httpCallableProvider),
     ref.watch(secureStorageProvider),
   );
 });
