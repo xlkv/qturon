@@ -34,6 +34,14 @@ Har yozuv shu shakl bo'yicha:
 
 ## Yozuvlar
 
+## 2026-06-04 — chore(windows): Windows build ishladi (flutter_map + shared_preferences)
+- **Map provider:** `yandex_mapkit` → `flutter_map` + Yandex tile servers (`core-renderer-tiles.maps.yandex.net`). Pure Dart, Windows + Android + iOS hammasida ishlaydi. Yandex ko'rinishi va ma'lumotlari saqlanadi.
+- **Local storage:** `flutter_secure_storage` → `shared_preferences`. Sabab: secure_storage Windows'da Microsoft ATL (`atlstr.h`) talab qiladi, ko'p devda yo'q. Trade-off documented in `AUTH_AND_ROLES.md` §7.
+- `SecureStorage` interface saqlandi (impl o'zgardi) — calling code o'zgarmaydi.
+- `flutter build windows --debug` → muvaffaqiyatli (`build\windows\x64\runner\Debug\turon_suv.exe`). PDB warning'lar zararsiz.
+- Run test: Firebase init OK, Auth init OK, Splash → silent_login (ok: false, kutilgan), Login sahifasi ko'rinadi.
+- Hujjatlar yangilandi: ARCHITECTURE.md §1 va §7, AUTH_AND_ROLES.md §7, pages/03_map_home.md.
+
 ## 2026-06-04 — feat(cities,map,profile): Profile + Cities CRUD + Map skeleton
 - **Deploy:** `firebase deploy --only functions` (validatePassKey jonli, europe-west1), `firestore:rules` + `storage:rules` deployed. Compute Engine API gcloud orqali yoqildi (`gcloud services enable compute.googleapis.com`).
 - **Profile (sahifa 12):** `features/auth/presentation/profile_page.dart` — avatar, ism, role badge, telefon, shaharlar, logout (confirm dialog bilan)

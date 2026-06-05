@@ -32,6 +32,21 @@
 
 ## Yozuvlar
 
+## 2026-06-04 — Windows build: `Cannot open include file: 'atlstr.h'`
+**Belgi:** `flutter build windows` xato:
+  `flutter_secure_storage_windows_plugin.cpp(6,10): error C1083: Cannot open include file: 'atlstr.h'`
+**Sabab:** `flutter_secure_storage` Windows implementatsiyasi Microsoft ATL (Active Template Library) ga bog'liq. ATL faqat Visual Studio "C++ ATL for v143 build tools" workload o'rnatilganda mavjud (default emas).
+**Yechim:** `flutter_secure_storage` paketini olib tashlab, `shared_preferences` ga ko'chirildi. `lib/core/utils/secure_storage.dart` interface saqlandi (impl o'zgardi) — barcha calling code o'zgarmaydi. Pass-key endi plain text saqlanadi (lekin himoya server tomonida — Firebase custom token + rate-limit). Tafsilot: `docs/AUTH_AND_ROLES.md` §7.
+**Aloqador fayllar:** `pubspec.yaml`, `lib/core/utils/secure_storage.dart`, `docs/AUTH_AND_ROLES.md`, `docs/ARCHITECTURE.md`.
+**Profilaktika:** Windows'da native code talab qiluvchi paketlar (ATL, Win32 API, COM) qo'shishdan oldin dev-environment'ni tekshirish. Ichki business app uchun pure-Dart paketlar afzal.
+
+## 2026-06-04 — yandex_mapkit Windows desktopni qo'llab-quvvatlamaydi
+**Belgi:** `yandex_mapkit` paketi pubspec'da, lekin Windows uchun native code yo'q. Build muvaffaqiyatli, lekin xarita ko'rinmaydi.
+**Sabab:** Yandex MapKit Flutter plugin faqat Android va iOS native SDK'larga bog'langan. Windows/Web/Linux uchun official implementatsiya yo'q.
+**Yechim:** `flutter_map` + Yandex tile server URL'i orqali pure-Dart yo'l tanlandi. URL: `https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU`. Windows + Android + iOS — bir xil ko'rinish va ma'lumotlar.
+**Aloqador fayllar:** `pubspec.yaml`, `lib/features/map/presentation/map_home_page.dart`, `docs/ARCHITECTURE.md` §7.
+**Profilaktika:** Map provider tanlashda Flutter package'ning platform support ro'yxatini tekshirish (pub.dev sahifasidagi "Supported platforms" qatori).
+
 ## 2026-06-04 — ESLint 9: "couldn't find an eslint.config.(js|mjs|cjs) file"
 **Belgi:** `firebase deploy --only functions` predeploy bosqichida `npm run lint` xato beradi:
   `ESLint couldn't find an eslint.config.(js|mjs|cjs) file. From ESLint v9.0.0, the default configuration file is now eslint.config.js.`

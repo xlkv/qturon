@@ -215,4 +215,8 @@ Tugatgach:
 
 ## Status
 
-WIP (2026-06-04) — `map_home_page.dart` skelet: AppBar (shahar nomi + super-admin uchun dropdown), Drawer (Map / Ustalar / Shaharlar / Foydalanuvchilar / Audit log / Profil — perms bilan), Yandex MapKit Android'da render qiladi (Windows desktopda "qo'llab-quvvatlanmaydi" empty state). Empty state'lar: shahar yo'q (super-admin'ga "Shahar qo'shish" link), shahar tayinlanmagan. Qoldi: kolodets/turba markerlari, FAB, filter, search, peek bottom sheet.
+WIP (2026-06-04) — `map_home_page.dart` skelet:
+- AppBar (shahar nomi + super-admin uchun dropdown), Drawer (Map / Ustalar / Shaharlar / Foydalanuvchilar / Audit log / Profil — perms bilan)
+- **Map: `flutter_map` + Yandex tile servers** (`core-renderer-tiles.maps.yandex.net`). Windows + Android + iOS — bir xil ishlaydi. yandex_mapkit'dan migratsiya qilindi.
+- Empty state'lar: shahar yo'q (super-admin'ga "Shahar qo'shish" link), shahar tayinlanmagan.
+- Qoldi: kolodets/turba markerlari (`MarkerLayer` + `PolylineLayer`), clustering, FAB, filter, search, peek bottom sheet.

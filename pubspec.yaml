@@ -30,11 +30,14 @@ dependencies:
   firebase_storage: ^12.3.7
   cloud_functions: ^5.1.5
 
-  # Map
-  yandex_mapkit: ^4.1.0
+  # Map (flutter_map + Yandex tile servers — Windows + Android + iOS)
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
 
   # Local storage
-  flutter_secure_storage: ^9.2.2
+  # Note: flutter_secure_storage Windows'da C++ ATL talab qiladi — shu sababli shared_preferences.
+  # Pass-key 6 xonali PIN, foydalanuvchi o'zi biladi — high-security saqlash shart emas.
+  # Real himoya — Firebase custom token (Cloud Function tomonida).
   shared_preferences: ^2.3.3
 
   # Image

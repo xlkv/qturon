@@ -275,10 +275,12 @@ Bu `UsersManagePage` da edit qilingach chaqiriladi.
 
 ## 7. Sessiya saqlash
 
-Pass-key `flutter_secure_storage` da saqlanadi (default — opt-in switch login sahifasida).
+Pass-key `shared_preferences` da saqlanadi (default — opt-in "Eslab qol" switch login sahifasida).
 
-- Android: EncryptedSharedPreferences (Keystore).
-- Windows: Windows Credential Vault (`flutter_secure_storage` qo'llab-quvvatlaydi).
+- Android: SharedPreferences XML file (`/data/data/<package>/shared_prefs/`).
+- Windows: `%APPDATA%\<package>\shared_preferences.json`.
+
+> **Trade-off:** Pass-key plain text saqlanadi. Bu — 6 xonali PIN bo'lgani uchun, foydalanuvchi o'zi biladi va xohlagan vaqt o'zgartirishi mumkin. Asosiy himoya — server tomonida (Firebase custom token, rate-limit). `flutter_secure_storage` ham qarab chiqildi, lekin u Windows'da Microsoft ATL (`atlstr.h`) talab qiladi va ko'p devlarda yo'q. Ichki business app uchun bu kompromis qabul qilingan.
 
 Storage key: `auth.passKey`.
 

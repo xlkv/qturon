@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SecureStorageKeys {
   SecureStorageKeys._();
@@ -7,23 +7,35 @@ class SecureStorageKeys {
   static const String installId = 'app.installId';
 }
 
+/// Note: SharedPreferences-backed, NOT actually encrypted.
+/// See pubspec.yaml comment for context (Windows + ATL).
+/// Pass-key himoyasi Firebase custom token tomonida.
 class SecureStorage {
-  SecureStorage(this._storage);
+  SecureStorage(this._prefsFuture);
 
-  final FlutterSecureStorage _storage;
+  final Future<SharedPreferences> _prefsFuture;
 
-  Future<String?> read(String key) => _storage.read(key: key);
+  Future<String?> read(String key) async {
+    final prefs = await _prefsFuture;
+    return prefs.getString(key);
+  }
 
-  Future<void> write(String key, String value) => _storage.write(key: key, value: value);
+  Future<void> write(String key, String value) async {
+    final prefs = await _prefsFuture;
+    await prefs.setString(key, value);
+  }
 
-  Future<void> delete(String key) => _storage.delete(key: key);
+  Future<void> delete(String key) async {
+    final prefs = await _prefsFuture;
+    await prefs.remove(key);
+  }
 
-  Future<void> clearAll() => _storage.deleteAll();
+  Future<void> clearAll() async {
+    final prefs = await _prefsFuture;
+    await prefs.clear();
+  }
 }
 
 final secureStorageProvider = Provider<SecureStorage>((ref) {
-  const storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(encryptedSharedPreferences: true),
-  );
-  return SecureStorage(storage);
+  return SecureStorage(SharedPreferences.getInstance());
 });

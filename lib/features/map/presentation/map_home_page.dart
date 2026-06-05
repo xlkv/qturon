@@ -1,8 +1,9 @@
-import 'package:flutter/foundation.dart';
+import 'package:cloud_firestore/cloud_firestore.dart' show GeoPoint;
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:yandex_mapkit/yandex_mapkit.dart';
+import 'package:latlong2/latlong.dart';
 
 import '../../../core/auth/permissions_provider.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -99,59 +100,37 @@ class _MapView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Yandex MapKit hozircha desktopda (Windows) qo'llab-quvvatlanmaydi.
-    if (!kIsWeb &&
-        defaultTargetPlatform != TargetPlatform.android &&
-        defaultTargetPlatform != TargetPlatform.iOS) {
-      return _MapUnsupportedPlatform(city: city);
-    }
-    return YandexMap(
-      onMapCreated: (controller) async {
-        await controller.moveCamera(
-          CameraUpdate.newCameraPosition(
-            CameraPosition(
-              target: Point(latitude: city.center.latitude, longitude: city.center.longitude),
-              zoom: city.defaultZoom,
-            ),
-          ),
-        );
-      },
+    final center = _toLatLng(city.center);
+    return FlutterMap(
+      options: MapOptions(
+        initialCenter: center,
+        initialZoom: city.defaultZoom,
+        minZoom: 3,
+        maxZoom: 19,
+      ),
+      children: const [
+        _YandexTileLayer(),
+      ],
     );
   }
+
+  LatLng _toLatLng(GeoPoint g) => LatLng(g.latitude, g.longitude);
 }
 
-class _MapUnsupportedPlatform extends StatelessWidget {
-  const _MapUnsupportedPlatform({required this.city});
-
-  final City city;
+/// Yandex tile servers via flutter_map.
+/// Note: this is unofficial — Yandex's ToS prefers their native SDK.
+/// For small internal apps this works reliably.
+class _YandexTileLayer extends StatelessWidget {
+  const _YandexTileLayer();
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Icon(Icons.map_outlined, size: 64),
-            const SizedBox(height: AppSpacing.md),
-            Text(
-              city.name,
-              style: Theme.of(context).textTheme.headlineSmall,
-            ),
-            const SizedBox(height: AppSpacing.sm),
-            Text(
-              '${city.center.latitude.toStringAsFixed(4)}, ${city.center.longitude.toStringAsFixed(4)}',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            const Text(
-              'Yandex Maps Windows desktopda hali qo\'llab-quvvatlanmaydi.\nAndroid qurilmasida xaritani ko\'rish mumkin.',
-              textAlign: TextAlign.center,
-            ),
-          ],
-        ),
-      ),
+    return TileLayer(
+      urlTemplate:
+          'https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU',
+      userAgentPackageName: 'uz.turonsuv.turon_suv',
+      maxNativeZoom: 19,
+      tileProvider: NetworkTileProvider(),
     );
   }
 }

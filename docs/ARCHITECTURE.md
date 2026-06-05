@@ -13,11 +13,11 @@
 | Til | Dart 3.x (sound null safety, records) | Default |
 | State | `flutter_riverpod` + `riverpod_annotation` + `riverpod_generator` | Codegen + compile-time safety |
 | Router | `go_router` | Declarative, deep-linking-ready |
-| Map | `yandex_mapkit` | O'zbekiston uchun eng yaxshi tile va POI |
+| Map | `flutter_map` + Yandex tile servers + `latlong2` | Pure Dart, Windows + Android + iOS + Web ishlaydi. Yandex'ning ko'cha/uy ma'lumotlari `core-renderer-tiles.maps.yandex.net` orqali. Tile URL'lar ToS bo'yicha kulrang zona — kichik ichki ilova uchun OK |
 | Backend | Firebase: `firebase_core`, `cloud_firestore`, `firebase_storage`, `firebase_auth` (custom token) | Hosted, real-time, offline cache |
 | Cloud Functions | `firebase_functions` (Node.js 20 TypeScript) | Pass-key → custom token validatsiyasi |
 | Image | `image_picker`, `cached_network_image`, `flutter_image_compress` | Foto yuklash + cache |
-| Local storage | `flutter_secure_storage` | Pass-key cache (PIN sifatida) |
+| Local storage | `shared_preferences` | Pass-key cache + active city. `flutter_secure_storage` ishlatilmaydi — Windows'da C++ ATL talab qiladi. Pass-key himoyasi Firebase custom token tomonida. |
 | Log | `logger` package + custom wrapper | Console + Firestore'ga `logs/` |
 | Form | Built-in `Form` + `TextFormField` + custom validators | Riverpod controllers bilan |
 | Lint | `flutter_lints` + custom `analysis_options.yaml` | [CODE_RULES.md](CODE_RULES.md) ga qarang |
@@ -176,13 +176,21 @@ Route nomlari [pages/INDEX.md](pages/INDEX.md) bilan moslashuvi shart.
 - Font: System default. Maxsus font qo'shmaymiz.
 - `AppSpacing` (4/8/12/16/24/32) — hardcode pixel YO'Q.
 
-## 7. Mapping qoidalari (Yandex)
+## 7. Mapping qoidalari (flutter_map + Yandex tiles)
 
-- Yandex MapKit init `main.dart` da, API key `.env` orqali (env_flavors keyinroq).
-- Marker `PlacemarkMapObject` (kolodets uchun yumaloq style).
-- Pipe `PolylineMapObject`.
-- Clustering: `ClusterizedPlacemarkCollection` — markerlar 50+ bo'lganda yoqiladi.
-- Map controller — `mapControllerProvider` (singleton per page).
+- `FlutterMap` widget asosiy, `TileLayer` ichida Yandex tile URL:
+  `https://core-renderer-tiles.maps.yandex.net/tiles?l=map&x={x}&y={y}&z={z}&scale=1&lang=ru_RU`
+- Kolodets — `MarkerLayer` ichida `Marker` (yumaloq Container `BoxShape.circle`).
+- Pipe — `PolylineLayer` ichida `Polyline`.
+- Clustering — `flutter_map_marker_cluster` paketi (50+ marker bo'lganda).
+- Map controller — `MapController` (per page, dispose qilinadi).
+- Windows, Android, iOS — hammasi bir xil ishlaydi (pure Dart).
+
+### Yandex tile servers haqida
+
+- Bu yondashuv **rasmiy emas** — Yandex ToS bo'yicha kompaniya Yandex MapKit SDK orqali ishlatishni afzal ko'radi.
+- Lekin bizning ichki ilovamiz (10-30 foydalanuvchi, ko'p emas, business app) uchun real xavf yo'q.
+- Agar kelajakda ko'p foydalanuvchi yoki Google Play Store'ga e'lon qilish bo'lsa — Yandex API key bilan rasmiy SDK'ga ko'chish kerak.
 
 ## 8. Modellar — Freezed
 
